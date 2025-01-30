@@ -58,13 +58,15 @@ run-demo: | download-models update-submodules download-sample-videos
 	$(MAKE) build
 	@echo Running automated self checkout pipeline
 	$(MAKE) run-render-mode
-	docker compose up -d
-	rm performance-tools/benchmark-scripts/results/*
-	$(MAKE) benchmark-cmd
-	python mqtt/publisher_intel.py &
-	python mqtt/fps_extracter.py &
-	@echo "To view the results, open the browser and navigate to http://localhost:3000"
-	wait
+
+run-mqtt:
+    docker compose up -d
+    rm -f performance-tools/benchmark-scripts/results/* 2>/dev/null
+    $(MAKE) benchmark-cmd
+    python mqtt/publisher_intel.py &
+    python mqtt/fps_extracter.py &
+    @echo "To view the results, open the browser and navigate to http://localhost:3000/"
+    wait
 
 benchmark-cmd:
 	$(MAKE) PIPELINE_COUNT=2 DURATION=60 DEVICE_ENV=res/all-cpu.env RESULTS_DIR=cpu benchmark
