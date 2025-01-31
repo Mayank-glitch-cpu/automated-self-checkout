@@ -61,50 +61,28 @@ run-demo: | download-models update-submodules download-sample-videos
 	
 
 run-mqtt:
-	# Check if python3 -m venv is available
-	@echo "Checking if Python's venv module is available..."
-	@python3 -m venv test-env > /dev/null 2>&1; \
-	if [ $$? -ne 0 ]; then \
-		echo "It looks like 'python3-venv' is not installed."; \
-		if [ "$(shell uname)" = "Linux" ]; then \
-			echo "To install it on Ubuntu/Debian, run: sudo apt install python3-venv"; \
-		elif [ "$(shell uname)" = "Darwin" ]; then \
-			echo "To install it on macOS, run: brew install python3"; \
-		elif [ "$(shell uname)" = "MINGW64_NT" ]; then \
-			echo "To install it on Windows, make sure you have Python 3 installed from https://www.python.org/downloads/"; \
-		else \
-			echo "Unsupported OS or environment."; \
-		fi; \
-		exit 1; \
-	else \
-		echo "Virtual environment module is available."; \
-		rm -rf test-env; \
-	fi
+	# check if python 3 is installed 
+	@python3 --version || (echo "Python 3 is not installed. Please install Python 3 and try again." && exit 1)
+
 	
 	docker compose up -d
 	rm -f performance-tools/benchmark-scripts/results/* 2>/dev/null
 	$(MAKE) benchmark-cmd
-	# Create a virtual environment (if not already created)
-	python3 -m venv venv
-	
-	# Activate the virtual environment and install dependencies
-	. venv/bin/activate && pip install --upgrade pip paho-mqtt
-	
-	# Run the required Python scripts in the background
-	. venv/bin/activate && python mqtt/publisher_intel.py &
-	. venv/bin/activate && python mqtt/fps_extracter.py &
-	
+	# install paho-mqtt
+	apt install python3-paho-mqtt
+	python3 mqtt/publisher_intel.py &
+	python3 mqtt/fps_extracter.py &
 	@echo "To view the results, open the browser and navigate to http://localhost:3000"
 	wait
 
-run-mqtt:
-    docker compose up -d
-    rm -f performance-tools/benchmark-scripts/results/* 2>/dev/null
-    $(MAKE) benchmark-cmd
-    python mqtt/publisher_intel.py &
-    python mqtt/fps_extracter.py &
-    @echo "To view the results, open the browser and navigate to http://localhost:3000/"
-    wait
+# run-mqtt:
+#     docker compose up -d
+#     rm -f performance-tools/benchmark-scripts/results/* 2>/dev/null
+#     $(MAKE) benchmark-cmd
+#     python mqtt/publisher_intel.py &
+#     python mqtt/fps_extracter.py &
+#     @echo "To view the results, open the browser and navigate to http://localhost:3000/"
+#     wait
 
 benchmark-cmd:
 	$(MAKE) PIPELINE_COUNT=2 DURATION=60 DEVICE_ENV=res/all-cpu.env RESULTS_DIR=cpu benchmark
