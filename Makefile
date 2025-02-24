@@ -63,14 +63,14 @@ run-demo: | download-models update-submodules download-sample-videos
 run-mqtt:
 	# check if python 3 is installed 
 	@python3 --version || (echo "Python 3 is not installed. Please install Python 3 and try again." && exit 1)
-	# ensure python points to python3
+	# ensure oython points to python3
 	@sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 	
 	docker compose up -d
 	rm -f performance-tools/benchmark-scripts/results/* 2>/dev/null
 	$(MAKE) benchmark-cmd
 	# install paho-mqtt
-	sudo apt install python3-paho-mqtt
+	sudo apt install -y python3-paho-mqtt
 	python3 mqtt/publisher_intel.py &
 	python3 mqtt/fps_extracter.py &
 	@echo "To view the results, open the browser and navigate to http://localhost:3000"
