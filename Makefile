@@ -63,7 +63,7 @@ run-demo: | download-models update-submodules download-sample-videos
 run-mqtt:
 	# check if python 3 is installed 
 	@python3 --version || (echo "Python 3 is not installed. Please install Python 3 and try again." && exit 1)
-	# ensure oython points to python3
+	# ensure python points to python3
 	@sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 	
 	docker compose up -d
