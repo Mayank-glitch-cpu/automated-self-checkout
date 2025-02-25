@@ -61,20 +61,24 @@ run-demo: | download-models update-submodules download-sample-videos
 	
 
 run-mqtt:
-	# check if python 3 is installed 
+    # Check if Python 3 is installed
 	@python3 --version || (echo "Python 3 is not installed. Please install Python 3 and try again." && exit 1)
-	# ensure oython points to python3
+    # Ensure python points to python3
 	@sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
-	
+    
+    # Build and start the Docker Compose services
 	docker compose up -d
 	rm -f performance-tools/benchmark-scripts/results/* 2>/dev/null
 	$(MAKE) benchmark-cmd
-	# install paho-mqtt
-	sudo apt install -y python3-paho-mqtt
-	python3 mqtt/publisher_intel.py &
-	python3 mqtt/fps_extracter.py &
+    
+    # Build and run the Python scripts container
+	docker build -t mqtt-scripts -f Dockerfile.mqtt .
+	docker run -d --rm \
+        -v $(PWD)/performance-tools/benchmark-scripts/results:/app/results \
+        -v $(PWD)/mqtt:/app/mqtt \
+        mqtt-scripts
 	@echo "To view the results, open the browser and navigate to http://localhost:3000"
-	wait
+	@echo "wait"
 
 benchmark-cmd:
 	$(MAKE) PIPELINE_COUNT=2 DURATION=60 DEVICE_ENV=res/all-cpu.env RESULTS_DIR=cpu benchmark
