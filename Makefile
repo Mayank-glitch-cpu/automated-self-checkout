@@ -72,7 +72,8 @@ run-mqtt:
 	$(MAKE) benchmark-cmd
     
     # Build and run the Python scripts container
-	docker build -t mqtt-scripts -f Dockerfile.mqtt .
+	docker build -t mqtt-scripts -f Dockerfile.fps .
+	docker build -t mqtt-scripts -f Dockerfile.cpu .
 	docker run -d --rm \
         -v $(PWD)/performance-tools/benchmark-scripts/results:/app/results \
         -v $(PWD)/mqtt:/app/mqtt \
