@@ -78,7 +78,7 @@ run-mqtt:
         -v $(PWD)/performance-tools/benchmark-scripts/results:/app/results \
         -v $(PWD)/mqtt:/app/mqtt \
         mqtt-scripts
-	@echo "To view the results, open the browser and navigate to http://localhost:3000"
+	@echo "To view the results, open the browser and navigate to http://localhost:3001"
 	@echo "wait"
 
 benchmark-cmd:
