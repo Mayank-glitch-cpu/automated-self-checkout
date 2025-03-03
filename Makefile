@@ -61,11 +61,6 @@ run-demo: | download-models update-submodules download-sample-videos
 	
 
 run-mqtt:
-    # Check if Python 3 is installed
-	@python3 --version || (echo "Python 3 is not installed. Please install Python 3 and try again." && exit 1)
-    # Ensure python points to python3
-	@sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
-    
     # Build and start the Docker Compose services
 	docker compose up -d
 	rm -f performance-tools/benchmark-scripts/results/* 2>/dev/null
@@ -80,6 +75,11 @@ run-mqtt:
         mqtt-scripts
 	@echo "To view the results, open the browser and navigate to http://localhost:3001"
 	@echo "wait"
+
+down-mqtt:
+	docker compose down
+	docker container stop mqtt-scripts
+	docker container rm mqtt-scripts
 
 benchmark-cmd:
 	$(MAKE) PIPELINE_COUNT=$(PIPELINE_COUNT) DURATION=$(DURATION) DEVICE_ENV=$(DEVICE_ENV) RESULTS_DIR=$(RESULTS_DIR) benchmark
