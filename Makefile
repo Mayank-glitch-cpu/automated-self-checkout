@@ -67,8 +67,8 @@ run-mqtt:
 	$(MAKE) benchmark-cmd
     
     # Build and run the Python scripts container
-	docker build -t mqtt-scripts -f Dockerfile.fps .
-	docker build -t mqtt-scripts -f Dockerfile.cpu .
+	docker build -t fps-mqtt-runner-1 -f Dockerfile.fps .
+	docker build -t cpu-mqtt-runner-1 -f Dockerfile.cpu .
 	docker run -d --rm \
         -v $(PWD)/performance-tools/benchmark-scripts/results:/app/results \
         -v $(PWD)/mqtt:/app/mqtt \
@@ -78,8 +78,6 @@ run-mqtt:
 
 down-mqtt:
 	docker compose down
-	docker container stop mqtt-scripts
-	docker container rm mqtt-scripts
 
 benchmark-cmd:
 	$(MAKE) PIPELINE_COUNT=$(PIPELINE_COUNT) DURATION=$(DURATION) DEVICE_ENV=$(DEVICE_ENV) RESULTS_DIR=$(RESULTS_DIR) benchmark
