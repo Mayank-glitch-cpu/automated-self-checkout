@@ -62,17 +62,13 @@ run-demo: | download-models update-submodules download-sample-videos
 
 run-mqtt:
     # Build and start the Docker Compose services
-	docker compose -f src/performance-dashboard/docker-compose.yml up -d
+	
 	rm -f performance-tools/benchmark-scripts/results/* 2>/dev/null
 	$(MAKE) benchmark-cmd
+
+	docker compose -f src/performance-dashboard/docker-compose.yml up -d
     
-    # Build and run the Python scripts container
-	docker build -t fps-mqtt-runner-1 -f src/performance-dashboard/Dockerfile.fps .
-	docker build -t cpu-mqtt-runner-1 -f src/performance-dashboard/Dockerfile.cpu .
-	docker run -d --rm \
-        -v $(PWD)/performance-tools/benchmark-scripts/results:/app/results \
-        -v $(PWD)/mqtt:/app/mqtt \
-        mqtt-scripts
+	
 	@echo "To view the results, open the browser and navigate to http://localhost:3001"
 	@echo "wait"
 
