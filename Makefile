@@ -62,13 +62,13 @@ run-demo: | download-models update-submodules download-sample-videos
 
 run-mqtt:
     # Build and start the Docker Compose services
-	docker compose up -d
+	docker compose -f src/performance-dashboard/docker-compose.yml up -d
 	rm -f performance-tools/benchmark-scripts/results/* 2>/dev/null
 	$(MAKE) benchmark-cmd
     
     # Build and run the Python scripts container
-	docker build -t fps-mqtt-runner-1 -f Dockerfile.fps .
-	docker build -t cpu-mqtt-runner-1 -f Dockerfile.cpu .
+	docker build -t fps-mqtt-runner-1 -f src/performance-dashboard/Dockerfile.fps .
+	docker build -t cpu-mqtt-runner-1 -f src/performance-dashboard/Dockerfile.cpu .
 	docker run -d --rm \
         -v $(PWD)/performance-tools/benchmark-scripts/results:/app/results \
         -v $(PWD)/mqtt:/app/mqtt \
@@ -77,7 +77,7 @@ run-mqtt:
 	@echo "wait"
 
 down-mqtt:
-	docker compose down
+	docker compose -f src/performance-dashboard/docker-compose.yml down
 
 benchmark-cmd:
 	$(MAKE) PIPELINE_COUNT=$(PIPELINE_COUNT) DURATION=$(DURATION) DEVICE_ENV=$(DEVICE_ENV) RESULTS_DIR=$(RESULTS_DIR) benchmark
